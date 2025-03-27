@@ -20,7 +20,7 @@
 
 ### 1️⃣ Clone the Repository  
 ```sh
-git clone https://github.com/anfargaming/ETH-Wallet-Generator.git
+git clone https://github.com/anfargaming/EVM-Wallet-Generator.git
 cd ETH-Wallet-Generator
 ```
 ### 2️⃣ Install Dependencies
