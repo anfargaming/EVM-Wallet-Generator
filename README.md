@@ -10,7 +10,6 @@
 
 ## ⚡ Features  
 ✔ **Generate Multiple Wallets** (Ethereum & EVM-compatible)  
-✔ **Export in Multiple Formats** (TXT, JSON, Excel, PDF, DOCX)  
 ✔ **Secure and Fast** – Uses **ethers.js** for wallet generation  
 ✔ **Customizable Output** – Select the wallet details you need  
 ✔ **Works with MetaMask, Trust Wallet, OKX Wallet, and more!**  
