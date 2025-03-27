@@ -13,7 +13,7 @@
     "figlet": "^1.5.2",
     "fs-extra": "^11.1.1",
     "inquirer": "^9.2.2",
-    "ora": "^7.1.0"
+    "ora": "^7.0.1"
   },
   "author": "AnfarMohd",
   "license": "MIT"
