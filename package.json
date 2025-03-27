@@ -5,7 +5,7 @@
   "main": "wallet-gen.js",
   "type": "module",
   "scripts": {
-    "start": "node EVM-wallet-generator.js"
+    "start": "node wallet-gen.js"
   },
   "dependencies": {
     "chalk": "^5.3.0",
