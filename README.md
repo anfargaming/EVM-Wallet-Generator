@@ -60,10 +60,11 @@ node wallet-gen.js
    Private Key: 0xabc...xyz
 ```
 
-## 🛡 Security Notice
-🔐 Keep your private keys and mnemonic phrases secure!
-⚠️ Do not share them with anyone.
-⚡ Use at your own risk. This tool is for educational purposes only.
+🔐 **Keep your private keys and mnemonic phrases secure!**  
+
+⚠️ **Do not share them with anyone.**  
+
+⚡ **Use at your own risk. This tool is for educational purposes only.**  
 
 ## 🔗 License
 This project is open-source under the MIT License.
