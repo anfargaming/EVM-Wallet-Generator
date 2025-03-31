@@ -29,7 +29,7 @@ function showBanner() {
 }
 
 async function getUserInput() {
-  console.log("");
+  console.log("\n");
   const { walletCount } = await inquirer.prompt([
     {
       type: "input",
@@ -42,13 +42,13 @@ async function getUserInput() {
 }
 
 async function getOutputPreferences() {
-  console.log("");
+  console.log("\n");
   console.log(chalk.magentaBright("\n📂 Select the wallet data you want to export:\n"));
   console.log(chalk.bgRedBright.bold("0. 🛑 Exit 🛑 "));
-  console.log(chalk.blueBright("1. Wallet Addresses Only"));
-  console.log(chalk.blueBright("2. Wallet Private Keys Only"));
-  console.log(chalk.blueBright("3. Wallet Mnemonic Only"));
-  console.log(chalk.red("4. All Wallet Details (With Serial Number)"), chalk.greenBright("(Recommended)"));
+  console.log(chalk.yellowBright("1. Wallet Addresses Only"));
+  console.log(chalk.yellowBright("2. Wallet Private Keys Only"));
+  console.log(chalk.yellowBright("3. Wallet Mnemonic Only"));
+  console.log(chalk.greenBright("4. All Wallet Details (With Serial Number)"), chalk.redBright("(✍️Recommended)"));
   console.log(chalk.cyanBright("5. All Wallet Addresses (With Serial Number)"));
   console.log(chalk.cyanBright("6. All Wallet Private Keys (With Serial Number)"));
   console.log(chalk.cyanBright("7. All Wallet Mnemonics (With Serial Number)\n"));
@@ -62,7 +62,7 @@ async function getOutputPreferences() {
     },
   ]);
 
-  console.log("");
+  console.log("\n");
   if (outputSelection.includes("0")) {
     log.info("Exiting...");
     process.exit(0);
@@ -97,13 +97,13 @@ async function main() {
   const walletCount = await getUserInput();
   const selectedOptions = await getOutputPreferences();
   const optionsMap = {
-    1: "ADDRESSES",
-    2: "PRIVATE_KEYS",
-    3: "MNEMONIC",
-    4: "DETAILS",
-    5: "SERIALIZED_ADDRESSES",
-    6: "SERIALIZED_PRIVATE_KEYS",
-    7: "SERIALIZED_MNEMONIC",
+    1: "address",
+    2: "privateKey",
+    3: "mnemonic",
+    4: "details",
+    5: "serial_address",
+    6: "serial_privateKey",
+    7: "serial_mnemonic",
   };
 
   log.info(`📜 Generating ${walletCount} wallets...\n`);
@@ -116,19 +116,9 @@ async function main() {
     const wallet = createNewWallet(i);
 
     for (const option of selectedOptions) {
-      const fileKey = optionsMap[option];
-      if (fileKey) {
-        let content = "";
-        if (fileKey === "ADDRESSES") content = wallet.address;
-        else if (fileKey === "PRIVATE_KEYS") content = wallet.privateKey;
-        else if (fileKey === "MNEMONIC") content = wallet.mnemonic;
-        else if (fileKey === "DETAILS") {
-          content = `${wallet.index}. Wallet ${wallet.index}\nWallet Address: ${wallet.address}\nMnemonic Phrase: ${wallet.mnemonic}\nPrivate Key: ${wallet.privateKey}\n`;
-        } else if (fileKey === "SERIALIZED_ADDRESSES") content = `${wallet.index}. ${wallet.address}`;
-        else if (fileKey === "SERIALIZED_PRIVATE_KEYS") content = `${wallet.index}. ${wallet.privateKey}`;
-        else if (fileKey === "SERIALIZED_MNEMONIC") content = `${wallet.index}. ${wallet.mnemonic}`;
-
-        await saveToFile(FILES[fileKey], content, createdFiles);
+      const key = optionsMap[option];
+      if (key && wallet[key]) {
+        await saveToFile(FILES[key.toUpperCase()], `${wallet.index}. ${wallet[key]}`, createdFiles);
       }
     }
 
@@ -146,12 +136,12 @@ async function main() {
   if (createdFiles.size > 0) {
     console.log(chalk.greenBright("\n📁 Files Created:"));
     for (const file of createdFiles) {
-      console.log(chalk.green(`✔ ${file}`));
+      console.log(chalk.magentaBright(`✔ ${file}`));
     }
   }
 
   console.log(chalk.greenBright("\n🎉 Wallets Generated Successfully!"));
-  console.log(chalk.blueBright(`✔ Total wallets: ${walletCount}`));
+  console.log(chalk.magentaBright(`✔ Total wallets: ${walletCount}`));
   console.log(chalk.cyan("\n🌟 Thank you for using the EVM Wallet Generator! 🚀\n"));
 }
 
