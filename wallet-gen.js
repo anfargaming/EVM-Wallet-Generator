@@ -46,7 +46,7 @@ async function getOutputPreferences() {
   console.log(chalk.cyan("1. Wallet Addresses Only"));
   console.log(chalk.cyan("2. Wallet Private Keys Only"));
   console.log(chalk.cyan("3. Wallet Mnemonic Only"));
-  console.log(chalk.cyan("4. All Wallet Details (With Serial Number)"));
+  console.log(chalk.red("4. All Wallet Details (With Serial Number)"), chalk.green("(Recommended)"));
   console.log(chalk.cyan("5. All Wallet Addresses (With Serial Number)"));
   console.log(chalk.cyan("6. All Wallet Private Keys (With Serial Number)"));
   console.log(chalk.cyan("7. All Wallet Mnemonics (With Serial Number)"));
