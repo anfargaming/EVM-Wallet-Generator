@@ -44,7 +44,7 @@ async function getUserInput() {
 async function getOutputPreferences() {
   console.log("");
   console.log(chalk.magentaBright("\n📂 Select the wallet data you want to export:\n"));
-  console.log(chalk.RedBright.bold("0. 🛑 Exit 🛑 "));
+  console.log(chalk.RedBright("0. 🛑 Exit 🛑 "));
   console.log(chalk.yellowBright("1. Wallet Addresses Only"));
   console.log(chalk.yellowBright("2. Wallet Private Keys Only"));
   console.log(chalk.yellowBright("3. Wallet Mnemonic Only"));
