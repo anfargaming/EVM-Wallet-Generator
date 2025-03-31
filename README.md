@@ -50,7 +50,7 @@ node wallet-gen.js
 | 🔵 5️⃣ | All Wallet Addresses (With Serial Number) |
 | 🔵 6️⃣ | All Wallet Private Keys (With Serial Number) |
 | 🔵 7️⃣ | All Wallet Mnemonics (With Serial Number) |
-
+| 🔵 0️⃣ | EXIT |
 
 ## 📜 Example Wallet Output
 ```yaml
@@ -60,10 +60,8 @@ node wallet-gen.js
 ```
 
 🔐 **Keep your private keys and mnemonic phrases secure!**  
-
 ⚠️ **Do not share them with anyone.**  
-
-⚡ **Use at your own risk. This tool is for educational purposes only.**  
+ 
 
 ## 🔗 License
 This project is open-source under the MIT License.
