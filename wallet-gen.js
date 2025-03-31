@@ -5,15 +5,13 @@ import ora from "ora";
 import figlet from "figlet";
 import inquirer from "inquirer";
 
-// Enhanced Logger with Colors
 const log = {
   info: (...args) => console.log(chalk.blueBright("[INFO]"), ...args),
   success: (...args) => console.log(chalk.greenBright("[SUCCESS]"), ...args),
-  error: (...args) => console.log(chalk.redBright("[ERROR]"), ...args),
+  error: (...args) => console.log(chalk.redBright("[ERROR]"), ...args)),
   warn: (...args) => console.log(chalk.yellowBright("[WARNING]"), ...args),
 };
 
-// File Paths
 const FILES = {
   ADDRESSES: "wallet_addresses.txt",
   PRIVATE_KEYS: "wallet_private_keys.txt",
@@ -24,14 +22,12 @@ const FILES = {
   SERIALIZED_MNEMONIC: "wallet_serial_mnemonic.txt",
 };
 
-// Show Welcome Banner
 function showBanner() {
   console.log(chalk.magentaBright(figlet.textSync("EVM Wallets", { horizontalLayout: "full" })));
   console.log(chalk.cyanBright("🚀 Supports ALL EVM-Compatible Blockchains 🚀"));
   console.log(chalk.yellowBright("💳 Works with MetaMask, Trust Wallet, OKX Wallet, and more! 💳\n"));
 }
 
-// Get User Input for Number of Wallets
 async function getUserInput() {
   const { walletCount } = await inquirer.prompt([
     {
@@ -44,9 +40,9 @@ async function getUserInput() {
   return parseInt(walletCount);
 }
 
-// Ask User for Output Preferences (Supports Multiple Selections)
 async function getOutputPreferences() {
   console.log(chalk.magentaBright("\n📂 Select the wallet data you want to export:"));
+  console.log(chalk.cyan("0. Exit"));
   console.log(chalk.cyan("1. Wallet Addresses Only"));
   console.log(chalk.cyan("2. Wallet Private Keys Only"));
   console.log(chalk.cyan("3. Wallet Mnemonic Only"));
@@ -60,13 +56,16 @@ async function getOutputPreferences() {
       type: "input",
       name: "outputSelection",
       message: "📌 Enter the number(s) separated by commas (e.g., 1,3,5):",
-      validate: (input) => input.match(/^([1-7],?)+$/) ? true : "Invalid input! Enter numbers separated by commas.",
+      validate: (input) => input.match(/^([0-7],?)+$/) ? true : "Invalid input! Enter numbers separated by commas.",
     },
   ]);
 
+  if (outputSelection.includes("0")) {
+    log.info("Exiting...");
+    process.exit(0);
+  }
+
   const selectedOptions = outputSelection.split(",").map(Number);
-  
-  // Map user selections to actual options
   const optionsMap = {
     1: "ADDRESSES",
     2: "PRIVATE_KEYS",
@@ -76,11 +75,9 @@ async function getOutputPreferences() {
     6: "SERIALIZED_PRIVATE_KEYS",
     7: "SERIALIZED_MNEMONIC",
   };
-
   return selectedOptions.map(num => optionsMap[num]).filter(Boolean);
 }
 
-// Secure File Writer
 async function saveToFile(filePath, data) {
   try {
     await fs.appendFile(filePath, data + "\n");
@@ -89,7 +86,6 @@ async function saveToFile(filePath, data) {
   }
 }
 
-// Wallet Generator Function
 function createNewWallet(index) {
   const wallet = ethers.Wallet.createRandom();
   return {
@@ -100,15 +96,9 @@ function createNewWallet(index) {
   };
 }
 
-// Main Function
 async function main() {
   showBanner();
   log.info("🔐 Secure EVM Wallet Generator Initialized...");
-
-  // Clear previous files
-  for (let key in FILES) {
-    await fs.writeFile(FILES[key], "");
-  }
 
   const walletCount = await getUserInput();
   const outputOptions = await getOutputPreferences();
@@ -148,5 +138,4 @@ async function main() {
   console.log(chalk.cyan("\n🌟 Thank you for using the EVM Wallet Generator! 🚀\n"));
 }
 
-// Run the Program
 main();
