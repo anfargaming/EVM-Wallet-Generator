@@ -76,6 +76,7 @@ async function getOutputPreferences() {
     6: "SERIALIZED_PRIVATE_KEYS",
     7: "SERIALIZED_MNEMONIC",
   };
+function processSelectedOptions(selectedOptions, optionsMap) {
   return selectedOptions.map(num => optionsMap[num]).filter(Boolean);
 }
 
