@@ -46,10 +46,10 @@ async function getOutputPreferences() {
   console.log(chalk.blueBright("1. Wallet Addresses Only"));
   console.log(chalk.blueBright("2. Wallet Private Keys Only"));
   console.log(chalk.blueBright("3. Wallet Mnemonic Only"));
-  console.log(chalk.greenBright("4. All Wallet Details (With Serial Number)"), chalk.greenBright("(Recommended)"));
+  console.log(chalk.red("4. All Wallet Details (With Serial Number)"), chalk.greenBright("(Recommended)"));
   console.log(chalk.cyanBright("5. All Wallet Addresses (With Serial Number)"));
   console.log(chalk.cyanBright("6. All Wallet Private Keys (With Serial Number)"));
-  console.log(chalk.cyanBright("7. All Wallet Mnemonics (With Serial Number)\n")); // Ensures spacing
+  console.log(chalk.cyanBright("7. All Wallet Mnemonics (With Serial Number)\n"));
 
   const { outputSelection } = await inquirer.prompt([
     {
@@ -65,23 +65,13 @@ async function getOutputPreferences() {
     process.exit(0);
   }
 
-  const selectedOptions = outputSelection.split(",").map(Number);
-  const optionsMap = {
-    1: "ADDRESSES",
-    2: "PRIVATE_KEYS",
-    3: "MNEMONIC",
-    4: "DETAILS",
-    5: "SERIALIZED_ADDRESSES",
-    6: "SERIALIZED_PRIVATE_KEYS",
-    7: "SERIALIZED_MNEMONIC",
-  };
-  return selectedOptions.map(num => optionsMap[num]).filter(Boolean);
+  return outputSelection.split(",").map(Number);
 }
 
-async function saveToFile(filePath, data) {
+async function saveToFile(filePath, data, createdFiles) {
   try {
     await fs.appendFile(filePath, data + "\n");
-    log.success(`📁 File Created: ${filePath}`);
+    createdFiles.add(filePath);
   } catch (error) {
     log.error(`⚠️ Failed to save data to ${filePath}:`, error.message);
   }
@@ -102,26 +92,32 @@ async function main() {
   log.info("🔐 Secure EVM Wallet Generator Initialized...");
 
   const walletCount = await getUserInput();
-  const outputOptions = await getOutputPreferences();
+  const selectedOptions = await getOutputPreferences();
+  const optionsMap = {
+    1: "ADDRESSES",
+    2: "PRIVATE_KEYS",
+    3: "MNEMONIC",
+    4: "DETAILS",
+    5: "SERIALIZED_ADDRESSES",
+    6: "SERIALIZED_PRIVATE_KEYS",
+    7: "SERIALIZED_MNEMONIC",
+  };
 
   log.info(`📜 Generating ${walletCount} wallets...`);
   const spinner = ora({ text: "🔄 Generating wallets...", color: "cyan" }).start();
 
   let walletData = [];
+  let createdFiles = new Set();
+
   for (let i = 0; i < walletCount; i++) {
     const wallet = createNewWallet(i);
 
-    if (outputOptions.includes("ADDRESSES")) await saveToFile(FILES.ADDRESSES, wallet.address);
-    if (outputOptions.includes("PRIVATE_KEYS")) await saveToFile(FILES.PRIVATE_KEYS, wallet.privateKey);
-    if (outputOptions.includes("MNEMONIC")) await saveToFile(FILES.MNEMONIC, wallet.mnemonic);
-    if (outputOptions.includes("DETAILS"))
-      await saveToFile(
-        FILES.DETAILS,
-        `${wallet.index}. Wallet ${wallet.index}\nWallet Address: ${wallet.address}\nMnemonic Phrase: ${wallet.mnemonic}\nPrivate Key: ${wallet.privateKey}\n`
-      );
-    if (outputOptions.includes("SERIALIZED_ADDRESSES")) await saveToFile(FILES.SERIALIZED_ADDRESSES, `${wallet.index}. ${wallet.address}`);
-    if (outputOptions.includes("SERIALIZED_PRIVATE_KEYS")) await saveToFile(FILES.SERIALIZED_PRIVATE_KEYS, `${wallet.index}. ${wallet.privateKey}`);
-    if (outputOptions.includes("SERIALIZED_MNEMONIC")) await saveToFile(FILES.SERIALIZED_MNEMONIC, `${wallet.index}. ${wallet.mnemonic}`);
+    for (const option of selectedOptions) {
+      const fileKey = optionsMap[option];
+      if (fileKey) {
+        await saveToFile(FILES[fileKey], `${wallet.index}. ${wallet[fileKey.toLowerCase()]}`, createdFiles);
+      }
+    }
 
     walletData.push({
       "#": wallet.index,
@@ -133,6 +129,13 @@ async function main() {
 
   console.log(chalk.magentaBright("\n📊 Wallet Summary:"));
   console.table(walletData);
+
+  if (createdFiles.size > 0) {
+    console.log(chalk.greenBright("\n📁 Files Created:"));
+    for (const file of createdFiles) {
+      console.log(chalk.green(`✔ ${file}`));
+    }
+  }
 
   console.log(chalk.greenBright("\n🎉 Wallets Generated Successfully!"));
   console.log(chalk.blueBright(`✔ Total wallets: ${walletCount}`));
