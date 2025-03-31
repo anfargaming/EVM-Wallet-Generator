@@ -136,12 +136,12 @@ async function main() {
   if (createdFiles.size > 0) {
     console.log(chalk.greenBright("\n📁 Files Created:"));
     for (const file of createdFiles) {
-      console.log(chalk.green(`✔ ${file}`));
+      console.log(chalk.magentaBright(`✔ ${file}`));
     }
   }
 
   console.log(chalk.greenBright("\n🎉 Wallets Generated Successfully!"));
-  console.log(chalk.blueBright(`✔ Total wallets: ${walletCount}`));
+  console.log(chalk.magentaBright(`✔ Total wallets: ${walletCount}`));
   console.log(chalk.cyan("\n🌟 Thank you for using the EVM Wallet Generator! 🚀\n"));
 }
 
