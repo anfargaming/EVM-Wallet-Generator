@@ -8,7 +8,7 @@ import inquirer from "inquirer";
 const log = {
   info: (...args) => console.log(chalk.blueBright("[INFO]"), ...args),
   success: (...args) => console.log(chalk.greenBright("[SUCCESS]"), ...args),
-  error: (...args) => console.log(chalk.redBright("[ERROR]"), ...args)),
+  error: (...args) => console.log(chalk.redBright("[ERROR]"), ...args),
   warn: (...args) => console.log(chalk.yellowBright("[WARNING]"), ...args),
 };
 
