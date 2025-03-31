@@ -6,10 +6,10 @@ import figlet from "figlet";
 import inquirer from "inquirer";
 
 const log = {
-  info: (...args) => console.log(chalk.blueBright("[INFO]"), ...args),
-  success: (...args) => console.log(chalk.greenBright("[SUCCESS]"), ...args),
-  error: (...args) => console.log(chalk.redBright("[ERROR]"), ...args),
-  warn: (...args) => console.log(chalk.yellowBright("[WARNING]"), ...args),
+  info: (...args) => console.log("\n" + chalk.blueBright("[INFO]"), ...args, "\n"),
+  success: (...args) => console.log("\n" + chalk.greenBright("[SUCCESS]"), ...args, "\n"),
+  error: (...args) => console.log("\n" + chalk.redBright("[ERROR]"), ...args, "\n"),
+  warn: (...args) => console.log("\n" + chalk.yellowBright("[WARNING]"), ...args, "\n"),
 };
 
 const FILES = {
@@ -23,12 +23,13 @@ const FILES = {
 };
 
 function showBanner() {
-  console.log(chalk.magentaBright(figlet.textSync("EVM Wallets", { horizontalLayout: "full" })));
-  console.log(chalk.cyanBright("🚀 Supports ALL EVM-Compatible Blockchains 🚀"));
+  console.log("\n" + chalk.magentaBright(figlet.textSync("EVM Wallets", { horizontalLayout: "full" })));
+  console.log(chalk.cyanBright("\n🚀 Supports ALL EVM-Compatible Blockchains 🚀\n"));
   console.log(chalk.yellowBright("💳 Works with MetaMask, Trust Wallet, OKX Wallet, and more! 💳\n"));
 }
 
 async function getUserInput() {
+  console.log("");
   const { walletCount } = await inquirer.prompt([
     {
       type: "input",
@@ -41,7 +42,8 @@ async function getUserInput() {
 }
 
 async function getOutputPreferences() {
-  console.log(chalk.magentaBright("\n📂 Select the wallet data you want to export:"));
+  console.log("");
+  console.log(chalk.magentaBright("\n📂 Select the wallet data you want to export:\n"));
   console.log(chalk.bgRedBright.bold("0. 🛑 Exit 🛑 "));
   console.log(chalk.blueBright("1. Wallet Addresses Only"));
   console.log(chalk.blueBright("2. Wallet Private Keys Only"));
@@ -60,6 +62,7 @@ async function getOutputPreferences() {
     },
   ]);
 
+  console.log("");
   if (outputSelection.includes("0")) {
     log.info("Exiting...");
     process.exit(0);
@@ -90,7 +93,7 @@ function createNewWallet(index) {
 async function main() {
   showBanner();
   log.info("🔐 Secure EVM Wallet Generator Initialized...");
-
+  
   const walletCount = await getUserInput();
   const selectedOptions = await getOutputPreferences();
   const optionsMap = {
@@ -103,7 +106,7 @@ async function main() {
     7: "SERIALIZED_MNEMONIC",
   };
 
-  log.info(`📜 Generating ${walletCount} wallets...`);
+  log.info(`📜 Generating ${walletCount} wallets...\n`);
   const spinner = ora({ text: "🔄 Generating wallets...", color: "cyan" }).start();
 
   let walletData = [];
@@ -125,7 +128,7 @@ async function main() {
       "Private Key": wallet.privateKey.substring(0, 10) + "...",
     });
   }
-  spinner.succeed("✅ Wallets generated successfully!");
+  spinner.succeed("✅ Wallets generated successfully!\n");
 
   console.log(chalk.magentaBright("\n📊 Wallet Summary:"));
   console.table(walletData);
