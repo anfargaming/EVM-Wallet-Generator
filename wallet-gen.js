@@ -42,15 +42,14 @@ async function getUserInput() {
 
 async function getOutputPreferences() {
   console.log(chalk.magentaBright("\n📂 Select the wallet data you want to export:"));
-  console.log(chalk.bgRedBright.bold("0. 🛑 Exit 🛑 "));
+  console.log(chalk.bgRedBright.bold(" 0. 🛑 Exit 🛑 "));
   console.log(chalk.blueBright("1. Wallet Addresses Only"));
   console.log(chalk.blueBright("2. Wallet Private Keys Only"));
   console.log(chalk.blueBright("3. Wallet Mnemonic Only"));
   console.log(chalk.red("4. All Wallet Details (With Serial Number)"), chalk.greenBright("(Recommended)"));
   console.log(chalk.cyanBright("5. All Wallet Addresses (With Serial Number)"));
   console.log(chalk.cyanBright("6. All Wallet Private Keys (With Serial Number)"));
-  console.log(chalk.cyanBright("7. All Wallet Mnemonics (With Serial Number)\n")); // Ensures spacing
-}
+  console.log(chalk.cyanBright("7. All Wallet Mnemonics (With Serial Number)\n"));
 
   const { outputSelection } = await inquirer.prompt([
     {
@@ -76,7 +75,8 @@ async function getOutputPreferences() {
     6: "SERIALIZED_PRIVATE_KEYS",
     7: "SERIALIZED_MNEMONIC",
   };
-return selectedOptions.map(num => optionsMap[num]).filter(Boolean);
+
+  return selectedOptions.map(num => optionsMap[num]).filter(Boolean);
 }
 
 async function saveToFile(filePath, data) {
@@ -92,7 +92,7 @@ function createNewWallet(index) {
   return {
     index: index + 1,
     address: wallet.address,
-    mnemonic: wallet.mnemonic.phrase,
+    mnemonic: wallet.mnemonic?.phrase || "N/A",
     privateKey: wallet.privateKey,
   };
 }
@@ -107,6 +107,9 @@ async function main() {
   log.info(`📜 Generating ${walletCount} wallets...`);
   const spinner = ora({ text: "🔄 Generating wallets...", color: "cyan" }).start();
 
+  // Clear existing files
+  await Promise.all(Object.values(FILES).map(file => fs.writeFile(file, "")));
+
   let walletData = [];
   for (let i = 0; i < walletCount; i++) {
     const wallet = createNewWallet(i);
@@ -114,29 +117,43 @@ async function main() {
     if (outputOptions.includes("ADDRESSES")) await saveToFile(FILES.ADDRESSES, wallet.address);
     if (outputOptions.includes("PRIVATE_KEYS")) await saveToFile(FILES.PRIVATE_KEYS, wallet.privateKey);
     if (outputOptions.includes("MNEMONIC")) await saveToFile(FILES.MNEMONIC, wallet.mnemonic);
-    if (outputOptions.includes("DETAILS"))
+    if (outputOptions.includes("DETAILS")) {
       await saveToFile(
         FILES.DETAILS,
-        `${wallet.index}. Wallet ${wallet.index}\nWallet Address: ${wallet.address}\nMnemonic Phrase: ${wallet.mnemonic}\nPrivate Key: ${wallet.privateKey}\n`
+        `${wallet.index}. Wallet ${wallet.index}\n` +
+        `Address: ${wallet.address}\n` +
+        `Mnemonic: ${wallet.mnemonic}\n` +
+        `Private Key: ${wallet.privateKey}\n` +
+        "=".repeat(40) + "\n"
       );
+    }
     if (outputOptions.includes("SERIALIZED_ADDRESSES")) await saveToFile(FILES.SERIALIZED_ADDRESSES, `${wallet.index}. ${wallet.address}`);
     if (outputOptions.includes("SERIALIZED_PRIVATE_KEYS")) await saveToFile(FILES.SERIALIZED_PRIVATE_KEYS, `${wallet.index}. ${wallet.privateKey}`);
     if (outputOptions.includes("SERIALIZED_MNEMONIC")) await saveToFile(FILES.SERIALIZED_MNEMONIC, `${wallet.index}. ${wallet.mnemonic}`);
 
     walletData.push({
       "#": wallet.index,
-      "Wallet Address": wallet.address.substring(0, 10) + "...",
+      "Address": wallet.address,
       "Private Key": wallet.privateKey.substring(0, 10) + "...",
+      "Mnemonic": wallet.mnemonic.split(" ").slice(0, 2).join(" ") + "...",
     });
   }
-  spinner.succeed("✅ Wallets generated successfully!");
+
+  spinner.succeed(`✅ Successfully generated ${walletCount} wallets!`);
 
   console.log(chalk.magentaBright("\n📊 Wallet Summary:"));
   console.table(walletData);
 
-  console.log(chalk.greenBright("\n🎉 Wallets Generated Successfully!"));
-  console.log(chalk.blueBright(`✔ Total wallets: ${walletCount}`));
-  console.log(chalk.cyan("\n🌟 Thank you for using the EVM Wallet Generator! 🚀\n"));
+  console.log(chalk.greenBright("\n📁 Files Created:"));
+  outputOptions.forEach(option => {
+    console.log(chalk.cyanBright(`✔ ${FILES[option]}`));
+  });
+
+  console.log(chalk.yellowBright("\n⚠️ IMPORTANT: Backup your private keys and mnemonics securely!"));
+  console.log(chalk.blueBright("\n🌟 Thank you for using EVM Wallet Generator! 🚀"));
 }
 
-main();
+main().catch(error => {
+  log.error("Fatal error:", error);
+  process.exit(1);
+});
