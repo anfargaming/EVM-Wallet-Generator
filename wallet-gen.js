@@ -45,10 +45,10 @@ async function getOutputPreferences() {
   console.log("");
   console.log(chalk.magentaBright("\n📂 Select the wallet data you want to export:\n"));
   console.log(chalk.bgRedBright.bold("0. 🛑 Exit 🛑 "));
-  console.log(chalk.yellowBright("1. Wallet Addresses Only"));
-  console.log(chalk.yellowBright("2. Wallet Private Keys Only"));
-  console.log(chalk.yellowBright("3. Wallet Mnemonic Only"));
-  console.log(chalk.greenBright("4. All Wallet Details (With Serial Number)"), chalk.redBright("(✍️Recommended)"));
+  console.log(chalk.blueBright("1. Wallet Addresses Only"));
+  console.log(chalk.blueBright("2. Wallet Private Keys Only"));
+  console.log(chalk.blueBright("3. Wallet Mnemonic Only"));
+  console.log(chalk.red("4. All Wallet Details (With Serial Number)"), chalk.greenBright("(Recommended)"));
   console.log(chalk.cyanBright("5. All Wallet Addresses (With Serial Number)"));
   console.log(chalk.cyanBright("6. All Wallet Private Keys (With Serial Number)"));
   console.log(chalk.cyanBright("7. All Wallet Mnemonics (With Serial Number)\n"));
@@ -118,7 +118,17 @@ async function main() {
     for (const option of selectedOptions) {
       const fileKey = optionsMap[option];
       if (fileKey) {
-        await saveToFile(FILES[fileKey], `${wallet.index}. ${wallet[fileKey.toLowerCase()]}`, createdFiles);
+        let content = "";
+        if (fileKey === "ADDRESSES") content = wallet.address;
+        else if (fileKey === "PRIVATE_KEYS") content = wallet.privateKey;
+        else if (fileKey === "MNEMONIC") content = wallet.mnemonic;
+        else if (fileKey === "DETAILS") {
+          content = `${wallet.index}. Wallet ${wallet.index}\nWallet Address: ${wallet.address}\nMnemonic Phrase: ${wallet.mnemonic}\nPrivate Key: ${wallet.privateKey}\n`;
+        } else if (fileKey === "SERIALIZED_ADDRESSES") content = `${wallet.index}. ${wallet.address}`;
+        else if (fileKey === "SERIALIZED_PRIVATE_KEYS") content = `${wallet.index}. ${wallet.privateKey}`;
+        else if (fileKey === "SERIALIZED_MNEMONIC") content = `${wallet.index}. ${wallet.mnemonic}`;
+
+        await saveToFile(FILES[fileKey], content, createdFiles);
       }
     }
 
@@ -136,12 +146,12 @@ async function main() {
   if (createdFiles.size > 0) {
     console.log(chalk.greenBright("\n📁 Files Created:"));
     for (const file of createdFiles) {
-      console.log(chalk.magentaBright(`✔ ${file}`));
+      console.log(chalk.green(`✔ ${file}`));
     }
   }
 
   console.log(chalk.greenBright("\n🎉 Wallets Generated Successfully!"));
-  console.log(chalk.magentaBright(`✔ Total wallets: ${walletCount}`));
+  console.log(chalk.blueBright(`✔ Total wallets: ${walletCount}`));
   console.log(chalk.cyan("\n🌟 Thank you for using the EVM Wallet Generator! 🚀\n"));
 }
 
