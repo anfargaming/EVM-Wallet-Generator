@@ -31,7 +31,7 @@ npm install
 ### 🚀 Usage
 Run the Script
 ```sh
-node wallet-gen.js
+node index.js
 ```
 ### Example Output:
 ```sh
