@@ -2,3 +2,12 @@ node_modules/
 .env
 *.log
 .DS_Store
+
+# Generated wallet files
+wallet_addresses.txt
+wallet_private_keys.txt
+wallet_mnemonic.txt
+wallet_details.txt
+wallet_serial_addresses.txt
+wallet_serial_private_keys.txt
+wallet_serial_mnemonic.txt
