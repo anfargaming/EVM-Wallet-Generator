@@ -2,10 +2,10 @@
   "name": "evm-wallet-generator",
   "version": "1.0.0",
   "description": "A secure EVM-compatible wallet generator supporting multiple output formats.",
-  "main": "wallet-gen.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node wallet-gen.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "chalk": "^5.3.0",
